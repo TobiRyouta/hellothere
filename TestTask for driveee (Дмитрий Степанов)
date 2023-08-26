@@ -1,0 +1,72 @@
+<?php
+class Order {
+    public $ID;
+    public $A;
+    public $B;
+
+    public function __construct($A, $B) {
+        $this->A = $A;
+        $this->B = $B;
+    }
+}
+
+class Driver {
+    public $DriverName;
+    public $GpsPoint;
+
+    public function __construct($GpsPoint) {
+        $this->GpsPoint = $GpsPoint;
+    }
+
+    public function GetFineOrders($orders) {
+        $FineOrders = [];
+
+        foreach ($orders as $order) {
+            if ($this->IsThisOrderFine($order)) {
+                $FineOrders[] = $order;
+            }
+        }
+
+        return $FineOrders;
+    }
+
+
+
+// Поиск подходящего заказа
+    private function IsThisOrderFine($order) {
+        return $this->OrderInGPS($GpsPoint->A);
+    }
+
+
+
+// Проверка подходит ли заказ
+    private function OrderInGPS($point) {
+        return $point == $this->GpsPoint->A;
+    }
+}
+
+// Тут проверку надо сделать посерьезнее конечно - думаю тут надо отборку сделать по радиусу 
+// Я не думаю что это будет сложно, но у меня сейчас не особо много времени поэтому тут просто проверка на совпадение координат
+
+// Создаем объекты заказов
+$order1 = new Order("A1", "B1");
+$order2 = new Order("A2", "B2");
+$order3 = new Order("A3", "B3");
+
+// Создаем объект GPS координаты водителя
+$GpsPoint = new Order("A1", "B1");
+
+// Создаем объект водителя с координатой
+$driver = new Driver($GpsPoint);
+
+// Создаем массив заказов
+$orders = [$order1, $order2, $order3];
+
+// Получаем подходящие заказы для водителя
+$FineOrders = $driver->GetFineOrders($orders);
+
+// Выводим информацию о подходящих заказах
+foreach ($FineOrders as $order) {
+    echo "Подходящий заказ: A [{$order->A}], B [{$order->B}]";
+}
+
