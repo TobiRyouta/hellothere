@@ -1,0 +1,68 @@
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+// Структура для хранения гео-координат
+type GeoCoords struct {
+	Latitude  float64
+	Longitude float64
+}
+
+// Структура заказа
+type Order struct {
+	From     GeoCoords // Точка А
+	To       GeoCoords // Точка Б
+	Cost     float64
+	Assigned bool // Флаг назначения заказа
+}
+
+// Структура курьера
+type Courier struct {
+	ID       int
+	Location GeoCoords
+}
+
+// Функция вычисления Евклидова расстояния между двумя точками
+func calculateDistance(a, b GeoCoords) float64 {
+	return math.Sqrt(math.Pow(a.Latitude-b.Latitude, 2) + math.Pow(a.Longitude-b.Longitude, 2))
+}
+
+// Функция распределения заказов между курьерами
+func assignOrdersToCouriers(orders []Order, couriers []Courier) {
+	for i := range orders {
+		if orders[i].Assigned {
+			continue
+		}
+		closestCourierIndex := -1
+		minDistance := math.MaxFloat64
+		for j := range couriers {
+			distance := calculateDistance(orders[i].From, couriers[j].Location)
+			if distance < minDistance {
+				minDistance = distance
+				closestCourierIndex = j
+			}
+		}
+		if closestCourierIndex != -1 {
+			fmt.Printf("Заказ назначен курьеру %d\n", couriers[closestCourierIndex].ID)
+			orders[i].Assigned = true
+			// Можно также обновить местоположение курьера, если необходимо
+		}
+	}
+}
+
+func main() {
+	// Пример данных
+	orders := []Order{
+		{From: GeoCoords{50.0, 36.0}, To: GeoCoords{50.5, 36.5}, Cost: 300.0},
+		{From: GeoCoords{50.1, 36.1}, To: GeoCoords{50.6, 36.6}, Cost: 200.0},
+	}
+	couriers := []Courier{
+		{ID: 1, Location: GeoCoords{50.05, 36.05}},
+		{ID: 2, Location: GeoCoords{49.95, 35.95}},
+	}
+
+	assignOrdersToCouriers(orders, couriers)
+}
